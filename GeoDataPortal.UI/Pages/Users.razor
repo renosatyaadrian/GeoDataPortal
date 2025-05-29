@@ -1,7 +1,7 @@
 @page "/users"
 @using GeoDataPortal.UI.Models
 @using GeoDataPortal.UI.Services
-@inject UserService UserService
+@inject IUserService UserService
 
 <h3>User Management</h3>
 
@@ -62,7 +62,7 @@ else
 </EditForm>
 
 @code {
-    private List<User>? users;
+    private IEnumerable<User>? users;
     private User formUser = new();
     private bool isEdit = false;
 
@@ -73,7 +73,7 @@ else
 
     private async Task LoadUsers()
     {
-        users = await UserService.GetAllUser();
+        users = await UserService.GetAllUsersAsync();
     }
 
     private async Task HandleSubmit()

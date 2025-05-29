@@ -2,7 +2,7 @@ using GeoDataPortal.UI.Models;
 
 namespace GeoDataPortal.UI.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly HttpClient _httpClient;
 
@@ -11,14 +11,14 @@ namespace GeoDataPortal.UI.Services
             _httpClient = httpClient;
         }
 
-        public async Task<User?> GetUserById(Guid id)
+        public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return await _httpClient.GetFromJsonAsync<User>($"api/user/{id}");
         }
 
-        public async Task<List<User>?> GetAllUser()
+        public async Task<IEnumerable<User>?> GetAllUsersAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<User>>("api/user");
+            return await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/user");
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
