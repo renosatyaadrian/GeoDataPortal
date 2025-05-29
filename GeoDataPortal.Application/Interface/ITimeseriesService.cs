@@ -1,6 +1,6 @@
 using GeoDataPortal.Domain.Entities;
 
-namespace GeoDataPortal.Application.Persistence.Mysql
+namespace GeoDataPortal.Application.Interface
 {
     public interface ITimeseriesService
     {

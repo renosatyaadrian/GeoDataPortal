@@ -1,4 +1,4 @@
-using GeoDataPortal.Application.Persistence.Postgresql;
+using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using GeoDataPortal.Application.Persistence.Mysql;
+using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace GeoDataPortal.API.Controllers
 {

@@ -1,7 +1,8 @@
+using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using GeoDataPortal.Domain.Interfaces;
 
-namespace GeoDataPortal.Application.Persistence.Postgresql
+namespace GeoDataPortal.Application.Service
 {
     public class GeoDataService : IGeoDataService
     {

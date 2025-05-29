@@ -1,6 +1,6 @@
 using GeoDataPortal.Domain.Entities;
 
-namespace GeoDataPortal.Application.Persistence.Postgresql
+namespace GeoDataPortal.Application.Interface
 {
     public interface IGeoDataService
     {

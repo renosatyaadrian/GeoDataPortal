@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GeoDataPortal.Application.Persistence.Mssql;
+using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 

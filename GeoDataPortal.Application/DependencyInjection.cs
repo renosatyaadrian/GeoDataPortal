@@ -1,6 +1,5 @@
-using GeoDataPortal.Application.Persistence.Mssql;
-using GeoDataPortal.Application.Persistence.Mysql;
-using GeoDataPortal.Application.Persistence.Postgresql;
+using GeoDataPortal.Application.Interface;
+using GeoDataPortal.Application.Service;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GeoDataPortal.Application

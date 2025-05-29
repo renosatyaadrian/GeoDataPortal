@@ -1,6 +1,6 @@
 using GeoDataPortal.Domain.Entities;
 
-namespace GeoDataPortal.Application.Persistence.Mssql
+namespace GeoDataPortal.Application.Interface
 {
     public interface IUserService
     {

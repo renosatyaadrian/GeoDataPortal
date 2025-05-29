@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using GeoDataPortal.Domain.Interfaces;
 
-namespace GeoDataPortal.Application.Persistence.Mssql
+namespace GeoDataPortal.Application.Service
 {
     public class UserService : IUserService
     {
