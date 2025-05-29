@@ -4,8 +4,11 @@
 @inject IGeoDataService GeoDataService
 @inject ITimeseriesService TimeseriesService
 
-<h3>GeoData</h3>
+<h2>Geo Data</h2>
 
+<hr />
+
+<h4>Create / Update Data</h4>
 <EditForm Model="@formGeoData" OnValidSubmit="HandleGeoDataSubmit">
     <InputText @bind-Value="formGeoData.Name" class="form-control" placeholder="Name" />
     <InputTextArea @bind-Value="formGeoData.GeoJson" class="form-control" placeholder="GeoJson" />
@@ -53,6 +56,8 @@ else
 
     <EditForm Model="@formTimeseries" OnValidSubmit="HandleTimeseriesSubmit">
         <InputDate @bind-Value="formTimeseries.Timestamp" class="form-control" />
+        <InputText @bind-Value="formTimeseries.Type" class="form-control" />
+        <InputText @bind-Value="formTimeseries.Unit" class="form-control" />
         <InputNumber @bind-Value="formTimeseries.Value" class="form-control" />
         <button type="submit" class="btn btn-secondary mt-2">
             @((isEditTimeseries) ? "Update" : "Add") Timeseries
@@ -71,13 +76,15 @@ else
     {
         <table class="table">
             <thead>
-                <tr><th>Timestamp</th><th>Value</th><th>Action</th></tr>
+                <tr><th>Timestamp</th><th>Type</th><th>Unit</th><th>Value</th><th>Action</th></tr>
             </thead>
             <tbody>
                 @foreach (var ts in timeseriesPoints)
                 {
                     <tr>
                         <td>@ts.Timestamp</td>
+                        <td>@ts.Type</td>
+                        <td>@ts.Unit</td>
                         <td>@ts.Value</td>
                         <td>
                             <button class="btn btn-sm btn-warning" @onclick="() => EditTimeseries(ts)">Edit</button>
@@ -134,8 +141,6 @@ else
             Id = data.Id,
             Name = data.Name,
             GeoJson = data.GeoJson,
-            @* Latitude = data.Latitude,
-            Longitude = data.Longitude *@
         };
         isEditGeoData = true;
     }
@@ -186,7 +191,9 @@ else
             Id = ts.Id,
             GeoDataId = ts.GeoDataId,
             Timestamp = ts.Timestamp,
-            Value = ts.Value
+            Value = ts.Value,
+            Type = ts.Type,
+            Unit = ts.Unit
         };
         isEditTimeseries = true;
     }
