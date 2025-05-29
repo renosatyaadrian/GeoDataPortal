@@ -1,0 +1,91 @@
+@page "/geodata"
+@using GeoDataPortal.UI.Services
+@inject IGeoDataService GeoDataService
+@inject ITimeseriesService TimeseriesService
+
+<h3>GeoData List</h3>
+
+@if (geoDatas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!geoDatas.Any())
+{
+    <p>No GeoData available.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr><th>Name</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var gd in geoDatas)
+            {
+                <tr>
+                    <td>@gd.Name</td>
+                    <td><button class="btn btn-primary btn-sm" @onclick="() => SelectGeoData(gd.Id)">Detail & Timeseries</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (selectedGeoData != null)
+{
+    <h4>GeoData Detail</h4>
+    <p><b>Name:</b> @selectedGeoData.Name</p>
+    <p><b>GeoJson:</b> <pre>@selectedGeoData.GeoJson</pre></p>
+
+    <h5>Timeseries Data</h5>
+    @if (timeseriesPoints == null)
+    {
+        <p><em>Loading timeseries...</em></p>
+    }
+    else if (!timeseriesPoints.Any())
+    {
+        <p>No timeseries data for this GeoData.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr><th>Timestamp</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var ts in timeseriesPoints)
+                {
+                    <tr>
+                        <td>@ts.Timestamp</td>
+                        <td>@ts.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <button class="btn btn-secondary" @onclick="ClearSelection">Close</button>
+}
+
+@code {
+    List<Models.GeoData>? geoDatas;
+    Models.GeoData? selectedGeoData;
+    IEnumerable<Models.Timeseries>? timeseriesPoints;
+
+    protected override async Task OnInitializedAsync()
+    {
+        geoDatas = await GeoDataService.GetAllAsync();
+    }
+
+    async Task SelectGeoData(Guid id)
+    {
+        selectedGeoData = await GeoDataService.GetByIdAsync(id);
+        timeseriesPoints = await TimeseriesService.GetTimeseriesByGeoDataIdAsync(id);
+    }
+
+    void ClearSelection()
+    {
+        selectedGeoData = null;
+        timeseriesPoints = null;
+    }
+}
