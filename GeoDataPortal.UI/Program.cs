@@ -10,7 +10,7 @@ builder.Services.AddScoped<ITimeseriesService, TimeseriesService>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddGeoDataPortalHttpClients(new Uri("https://localhost:7020/"));
+builder.Services.AddGeoDataPortalHttpClients(new Uri("http://localhost:5096/"));
 
 var app = builder.Build();
 
