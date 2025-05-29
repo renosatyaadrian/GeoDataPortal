@@ -61,12 +61,6 @@ namespace GeoDataPortal.API.Controllers
             if (id != user.Id)
                 return BadRequest();
 
-            var existingUser = await _userService.GetByEmailAsync(user.Email);
-            if (existingUser != null)
-            {
-                return Conflict(new { message = $"User with email '{user.Email}' already exists." });
-            }
-
             await _userService.UpdateUserAsync(user);
             return NoContent();
         }

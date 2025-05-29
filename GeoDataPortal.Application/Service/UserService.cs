@@ -13,15 +13,19 @@ namespace GeoDataPortal.Application.Service
         {
             _userRepository = userRepository;
         }
-        public Task AddUserAsync(AddUpdateUserDto user)
+        public async Task AddUserAsync(AddUpdateUserDto user)
         {
-            var newUser = new User
+            var userExist = await _userRepository.GetByEmailAsync(user.Email);
+            if (userExist == null)
             {
-                Username = user.Username,
-                Email = user.Email
-            };
+                var newUser = new User
+                {
+                    Username = user.Username,
+                    Email = user.Email
+                };
 
-            return _userRepository.AddAsync(newUser);
+                await _userRepository.AddAsync(newUser);
+            }
         }
 
         public Task DeleteUserAsync(Guid id)
@@ -73,15 +77,19 @@ namespace GeoDataPortal.Application.Service
             return null;
         }
 
-        public Task UpdateUserAsync(AddUpdateUserDto user)
+        public async Task UpdateUserAsync(AddUpdateUserDto user)
         {
-            var updatedUser = new User
+            var userExist = await _userRepository.GetByEmailAsync(user.Email);
+            if (userExist == null)
             {
-                Id = user.Id!.Value,
-                Email = user.Email,
-                Username = user.Username,
-            };
-            return _userRepository.UpdateAsync(updatedUser);
+                var updatedUser = new User
+                {
+                    Id = user.Id!.Value,
+                    Email = user.Email,
+                    Username = user.Username,
+                };
+                await _userRepository.UpdateAsync(updatedUser);
+            }
         }
     }
 }
