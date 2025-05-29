@@ -26,6 +26,21 @@ A 3-tier .NET web application for managing geospatial data, time series records,
 * CORS & HttpClient for inter-layer communication
 
 ---
+## ⚙️ 3rd Party Libraries
+
+* Swashbuckle.AspNetCore
+    * Integrated to automatically generate OpenAPI (Swagger) documentation for the API endpoints, simplifying API consumption and testing.
+* Pomelo.EntityFrameworkCore.MySql
+    * Utilized as the Entity Framework Core provider for connecting to MySQL databases. 
+    * Chosen for its good performance and robust compatibility with MySQL.
+* Npgsql.EntityFrameworkCore.PostgreSQL 
+    * Utilized as the Entity Framework Core provider for connecting to PostgreSQL databases. 
+    * Selected for its comprehensive support of * PostgreSQL features and optimized performance.
+* Moq & xUnit 
+    * Used for creating mock objects in unit testing. 
+    * Selected for the rapid creation of mock objects, enabling isolated and lightning-fast testing of business logic without relying on external dependencies like databases or external APIs.
+
+---
 ## 🏛️ Architecture Design
 
 This project adopts a **3-Layered Architecture** with a strong emphasis on **Separation of Concerns** and **Clean Architecture principles**.
@@ -51,7 +66,7 @@ The 3-layered architecture is implemented through the following project structur
 * **Presentation Layer (`GeoDataPortal.API` & `GeoDataPortal.UI`):**
     * **`GeoDataPortal.API` (Web API):** Serves as the primary entry point for client applications. It receives HTTP requests, performs initial input validation (using DTOs), delegates business logic to the `Application` layer, and returns appropriate HTTP responses.
     * **`GeoDataPortal.UI` (Blazor WASM):** Provides the single-page application (SPA) front-end, interacting with the `GeoDataPortal.API` to fetch and display data, and to send user commands.
-* **Business Logic Layer (`GeoDataPortal.Application`):**
+* **Business Logic Layer (`GeoDataPortal.Application` & `GoDataPortal.Domain`):**
     * This layer is the heart of the application, containing the core business rules and use cases.
     * It defines **Application Services** (e.g., `UserService`, `GeoDataService`, `TimeseriesService`) that orchestrate operations, perform business validations, and manage transactions.
     * **Data Transfer Objects (DTOs)** are defined here to serve as the contract for data flowing between the Presentation and Business Logic layers, ensuring domain entities are not directly exposed.
@@ -67,11 +82,12 @@ The 3-layered architecture is implemented through the following project structur
 ```
 GeoDataPortal/
 │
-├── GeoDataPortal.Domain        # Entities and base interfaces
-├── GeoDataPortal.Application   # Interfaces, DTOs, and business logic
-├── GeoDataPortal.Infrastructure# Database contexts and service implementations
-├── GeoDataPortal.API           # Web API entry point
-└── GeoDataPortal.UI            # Blazor WASM front-end
+├── GeoDataPortal.API            # Web API entry point
+├── GeoDataPortal.Application    # Interfaces, DTOs, and business logic
+├── GeoDataPortal.Domain         # Entities and base interfaces
+├── GeoDataPortal.Infrastructure # Database contexts and service implementations
+├── GeoDataPortal.Test           # Application service unit testing using Moq & xUnit
+└── GeoDataPortal.UI             # Blazor WASM front-end
 ```
 
 ---
@@ -93,10 +109,9 @@ cd GeoDataPortal.API
 dotnet run
 ```
 
-By default it will run at:
+By default API will run at:
 
 * `http://localhost:5096`
-* `https://localhost:7020`
 
 ### 3. Run the Front-End (Blazor UI)
 
@@ -105,7 +120,9 @@ cd GeoDataPortal.UI
 dotnet run
 ```
 
-Visit `http://localhost:5000` (or your configured port).
+By default UI will run at:
+
+* `http://localhost:5091`
 
 ---
 ## 🧪 Testing
