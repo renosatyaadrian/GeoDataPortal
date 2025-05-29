@@ -1,3 +1,4 @@
+using GeoDataPortal.UI.Extensions;
 using GeoDataPortal.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,18 +10,7 @@ builder.Services.AddScoped<ITimeseriesService, TimeseriesService>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddHttpClient<IUserService, UserService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7020/");
-});
-builder.Services.AddHttpClient<IGeoDataService, GeoDataService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7020/");
-});
-builder.Services.AddHttpClient<ITimeseriesService, TimeseriesService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7020/");
-});
+builder.Services.AddGeoDataPortalHttpClients(new Uri("https://localhost:7020/"));
 
 var app = builder.Build();
 
