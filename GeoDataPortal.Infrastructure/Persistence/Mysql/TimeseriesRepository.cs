@@ -20,12 +20,28 @@ namespace GeoDataPortal.Infrastructure.Persistence.Mysql
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            var timeseries = await _dbContext.Timeseries.FindAsync(id);
+            if (timeseries != null)
+            {
+                _dbContext.Timeseries.Remove(timeseries);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
         public async Task<IEnumerable<Timeseries>> GetByGeoDataIdAsync(Guid geoDataId)
         {
             return await _dbContext.Timeseries
                 .Where(t => t.GeoDataId == geoDataId)
-                .OrderByDescending(u => u.CreatedAt)
+                .OrderByDescending(u => u.Timestamp)
                 .ToListAsync();
+        }
+
+        public async Task UpdateAsync(Timeseries timeseries)
+        {
+            _dbContext.Timeseries.Update(timeseries);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -54,7 +54,6 @@ namespace GeoDataPortal.API.Controllers
             return CreatedAtAction(nameof(CreateUser), new { id = user.Id }, user);
         }
         
-        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] User user)
         {

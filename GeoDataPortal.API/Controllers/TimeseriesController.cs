@@ -34,5 +34,22 @@ namespace GeoDataPortal.API.Controllers
             await _timeseriesService.AddTimeseriesAsync(timeseries);
             return CreatedAtAction(nameof(CreateTimeseries), new { id = timeseries.Id }, timeseries);
         }
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTimeseries(Guid id, [FromBody] Timeseries timeseries)
+        {
+            if (id != timeseries.Id)
+                return BadRequest();
+
+            await _timeseriesService.UpdateTimeseriesAsync(timeseries);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTimeseries(Guid id)
+        {
+            await _timeseriesService.DeleteTimeseriesAsync(id);
+            return NoContent();
+        }
     }
 }

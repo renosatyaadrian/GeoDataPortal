@@ -7,5 +7,7 @@ namespace GeoDataPortal.Application.Persistence.Postgresql
         Task<GeoData?> GetGeoDataByIdAsync(Guid id);
         Task<IEnumerable<GeoData>> GetAllGeoDataAsync();
         Task AddGeodataAsync(GeoData geoData);
+        Task UpdateGeoDataAsync(GeoData geoData);
+        Task DeleteGeoDataAsync(Guid id);
     }
 }

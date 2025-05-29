@@ -37,5 +37,22 @@ namespace GeoDataPortal.API.Controllers
             await _geoDataService.AddGeodataAsync(geoData);
             return CreatedAtAction(nameof(CreateGeoData), new { id = geoData.Id }, geoData);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateGeoData(Guid id, [FromBody] GeoData geoData)
+        {
+            if (id != geoData.Id)
+                return BadRequest();
+
+            await _geoDataService.UpdateGeoDataAsync(geoData);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteGeoData(Guid id)
+        {
+            await _geoDataService.DeleteGeoDataAsync(id);
+            return NoContent();
+        }
     }
 }

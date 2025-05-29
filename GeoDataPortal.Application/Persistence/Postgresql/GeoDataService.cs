@@ -17,6 +17,11 @@ namespace GeoDataPortal.Application.Persistence.Postgresql
             return _geoDataRepository.AddAsync(geoData);
         }
 
+        public Task DeleteGeoDataAsync(Guid id)
+        {
+            return _geoDataRepository.DeleteAsync(id);
+        }
+
         public Task<IEnumerable<GeoData>> GetAllGeoDataAsync()
         {
             return _geoDataRepository.GetAllAsync();
@@ -25,6 +30,11 @@ namespace GeoDataPortal.Application.Persistence.Postgresql
         public Task<GeoData?> GetGeoDataByIdAsync(Guid id)
         {
             return _geoDataRepository.GetByIdAsync(id);
+        }
+
+        public Task UpdateGeoDataAsync(GeoData geoData)
+        {
+            return _geoDataRepository.UpdateAsync(geoData);
         }
     }
 }

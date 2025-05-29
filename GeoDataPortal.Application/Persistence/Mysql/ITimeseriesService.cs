@@ -6,5 +6,7 @@ namespace GeoDataPortal.Application.Persistence.Mysql
     {
         Task<IEnumerable<Timeseries>> GetTimeseriesByGeoDataIdAsync(Guid geoDataId);
         Task AddTimeseriesAsync(Timeseries timeseries);
+        Task UpdateTimeseriesAsync(Timeseries timeseries);
+        Task DeleteTimeseriesAsync(Guid id);
     }
 }

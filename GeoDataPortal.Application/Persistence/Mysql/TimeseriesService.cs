@@ -17,9 +17,19 @@ namespace GeoDataPortal.Application.Persistence.Mysql
             return _timeseriesRepository.AddAsync(timeseries);
         }
 
+        public Task DeleteTimeseriesAsync(Guid id)
+        {
+            return _timeseriesRepository.DeleteAsync(id);
+        }
+
         public Task<IEnumerable<Timeseries>> GetTimeseriesByGeoDataIdAsync(Guid geoDataId)
         {
             return _timeseriesRepository.GetByGeoDataIdAsync(geoDataId);
+        }
+
+        public Task UpdateTimeseriesAsync(Timeseries timeseries)
+        {
+            return _timeseriesRepository.UpdateAsync(timeseries);
         }
     }
 }

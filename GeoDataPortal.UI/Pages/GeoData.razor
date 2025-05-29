@@ -1,11 +1,20 @@
 @page "/geodata"
 @using GeoDataPortal.UI.Services
+@using GeoDataPortal.UI.Models
 @inject IGeoDataService GeoDataService
 @inject ITimeseriesService TimeseriesService
 
-<h3>GeoData List</h3>
+<h3>GeoData</h3>
 
-@if (geoDatas == null)
+<EditForm Model="@formGeoData" OnValidSubmit="HandleGeoDataSubmit">
+    <InputText @bind-Value="formGeoData.Name" class="form-control" placeholder="Name" />
+    <InputTextArea @bind-Value="formGeoData.GeoJson" class="form-control" placeholder="GeoJson" />
+    <button type="submit" class="btn btn-success mt-2">@((isEditGeoData) ? "Update" : "Create") GeoData</button>
+</EditForm>
+
+<hr />
+
+@if (geoDatas is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -24,7 +33,11 @@ else
             {
                 <tr>
                     <td>@gd.Name</td>
-                    <td><button class="btn btn-primary btn-sm" @onclick="() => SelectGeoData(gd.Id)">Detail & Timeseries</button></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => SelectGeoData(gd.Id)">Detail & Timeseries</button>
+                        <button class="btn btn-warning btn-sm" @onclick="() => EditGeoData(gd)">Edit</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteGeoData(gd.Id)">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -33,24 +46,32 @@ else
 
 @if (selectedGeoData != null)
 {
-    <h4>GeoData Detail</h4>
-    <p><b>Name:</b> @selectedGeoData.Name</p>
+    <h4>GeoData Detail: @selectedGeoData.Name</h4>
     <p><b>GeoJson:</b> <pre>@selectedGeoData.GeoJson</pre></p>
 
     <h5>Timeseries Data</h5>
+
+    <EditForm Model="@formTimeseries" OnValidSubmit="HandleTimeseriesSubmit">
+        <InputDate @bind-Value="formTimeseries.Timestamp" class="form-control" />
+        <InputNumber @bind-Value="formTimeseries.Value" class="form-control" />
+        <button type="submit" class="btn btn-secondary mt-2">
+            @((isEditTimeseries) ? "Update" : "Add") Timeseries
+        </button>
+    </EditForm>
+
     @if (timeseriesPoints == null)
     {
         <p><em>Loading timeseries...</em></p>
     }
     else if (!timeseriesPoints.Any())
     {
-        <p>No timeseries data for this GeoData.</p>
+        <p>No timeseries data.</p>
     }
     else
     {
         <table class="table">
             <thead>
-                <tr><th>Timestamp</th><th>Value</th></tr>
+                <tr><th>Timestamp</th><th>Value</th><th>Action</th></tr>
             </thead>
             <tbody>
                 @foreach (var ts in timeseriesPoints)
@@ -58,34 +79,122 @@ else
                     <tr>
                         <td>@ts.Timestamp</td>
                         <td>@ts.Value</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" @onclick="() => EditTimeseries(ts)">Edit</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteTimeseries(ts.Id)">Delete</button>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     }
 
-    <button class="btn btn-secondary" @onclick="ClearSelection">Close</button>
+    <button class="btn btn-outline-secondary" @onclick="ClearSelection">Close</button>
 }
 
 @code {
     List<Models.GeoData>? geoDatas;
+    Models.GeoData formGeoData = new();
     Models.GeoData? selectedGeoData;
-    IEnumerable<Models.Timeseries>? timeseriesPoints;
+    bool isEditGeoData = false;
+
+    List<Models.Timeseries>? timeseriesPoints;
+    Models.Timeseries formTimeseries = new();
+    bool isEditTimeseries = false;
 
     protected override async Task OnInitializedAsync()
     {
-        geoDatas = await GeoDataService.GetAllAsync();
+        await LoadGeoData();
+    }
+
+    async Task LoadGeoData()
+    {
+        geoDatas = await GeoDataService.GetAllGeoDataAsync();
+    }
+
+    async Task HandleGeoDataSubmit()
+    {
+        if (isEditGeoData)
+            await GeoDataService.UpdateGeoDataAsync(formGeoData);
+        else
+        {
+            formGeoData.Id = Guid.NewGuid();
+            await GeoDataService.CreateGeoDataAsync(formGeoData);
+        }
+
+        formGeoData = new();
+        isEditGeoData = false;
+        await LoadGeoData();
+    }
+
+    void EditGeoData(Models.GeoData data)
+    {
+        formGeoData = new Models.GeoData
+        {
+            Id = data.Id,
+            Name = data.Name,
+            GeoJson = data.GeoJson,
+            @* Latitude = data.Latitude,
+            Longitude = data.Longitude *@
+        };
+        isEditGeoData = true;
+    }
+
+    async Task DeleteGeoData(Guid id)
+    {
+        await GeoDataService.DeleteGeoDataAsync(id);
+        await LoadGeoData();
+        if (selectedGeoData?.Id == id) ClearSelection();
     }
 
     async Task SelectGeoData(Guid id)
     {
-        selectedGeoData = await GeoDataService.GetByIdAsync(id);
-        timeseriesPoints = await TimeseriesService.GetTimeseriesByGeoDataIdAsync(id);
+        selectedGeoData = await GeoDataService.GetGeoDataByIdAsync(id);
+        formTimeseries = new Timeseries { GeoDataId = id };
+        timeseriesPoints = (await TimeseriesService.GetTimeseriesByGeoDataIdAsync(id))!.ToList();
     }
 
     void ClearSelection()
     {
         selectedGeoData = null;
         timeseriesPoints = null;
+        formTimeseries = new();
+        isEditTimeseries = false;
+    }
+
+    async Task HandleTimeseriesSubmit()
+    {
+        if (isEditTimeseries)
+            await TimeseriesService.UpdateTimeseriesAsync(formTimeseries);
+        else
+        {
+            formTimeseries.Id = Guid.NewGuid();
+            await TimeseriesService.CreateTimeseriesAsync(formTimeseries);
+        }
+
+        if (selectedGeoData != null)
+            timeseriesPoints = (await TimeseriesService.GetTimeseriesByGeoDataIdAsync(selectedGeoData.Id))!.ToList();
+
+        formTimeseries = new Timeseries { GeoDataId = selectedGeoData?.Id ?? Guid.Empty };
+        isEditTimeseries = false;
+    }
+
+    void EditTimeseries(Timeseries ts)
+    {
+        formTimeseries = new Timeseries
+        {
+            Id = ts.Id,
+            GeoDataId = ts.GeoDataId,
+            Timestamp = ts.Timestamp,
+            Value = ts.Value
+        };
+        isEditTimeseries = true;
+    }
+
+    async Task DeleteTimeseries(Guid id)
+    {
+        await TimeseriesService.DeleteTimeseriesAsync(id);
+        if (selectedGeoData != null)
+            timeseriesPoints = (await TimeseriesService.GetTimeseriesByGeoDataIdAsync(selectedGeoData.Id))!.ToList();
     }
 }

@@ -20,6 +20,16 @@ namespace GeoDataPortal.Infrastructure.Persistence.Postgres
             await _dbContext.SaveChangesAsync();
         }
 
+        public async  Task DeleteAsync(Guid id)
+        {
+            var geoData = await _dbContext.GeoDatas.FindAsync(id);
+            if (geoData != null)
+            {
+                _dbContext.GeoDatas.Remove(geoData);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
         public async Task<IEnumerable<GeoData>> GetAllAsync()
         {
             return await _dbContext.GeoDatas
@@ -30,6 +40,12 @@ namespace GeoDataPortal.Infrastructure.Persistence.Postgres
         public async Task<GeoData?> GetByIdAsync(Guid id)
         {
             return await _dbContext.GeoDatas.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(GeoData geoData)
+        {
+            _dbContext.GeoDatas.Update(geoData);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

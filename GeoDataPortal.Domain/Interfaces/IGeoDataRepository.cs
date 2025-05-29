@@ -7,5 +7,7 @@ namespace GeoDataPortal.Domain.Interfaces
         Task<GeoData?> GetByIdAsync(Guid id);
         Task<IEnumerable<GeoData>> GetAllAsync();
         Task AddAsync(GeoData geoData);
+        Task UpdateAsync(GeoData geoData);
+        Task DeleteAsync(Guid id);
     }
 }

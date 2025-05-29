@@ -5,6 +5,8 @@ namespace GeoDataPortal.UI.Services
     public interface ITimeseriesService
     {
         Task<IEnumerable<Timeseries>?> GetTimeseriesByGeoDataIdAsync(Guid geoDataId);
-        Task<bool> AddTimeseriesAsync(Timeseries timeseries);
+        Task<bool> CreateTimeseriesAsync(Timeseries timeseries);
+        Task<bool> UpdateTimeseriesAsync(Timeseries timeseries);
+        Task<bool> DeleteTimeseriesAsync(Guid id);
     }
 }
