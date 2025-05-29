@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using GeoDataPortal.Application.Persistence.Mssql;
+using GeoDataPortal.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
+
+namespace GeoDataPortal.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
+    {
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUser(Guid id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null) return NotFound();
+
+            return Ok(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
+        }
+
+        [HttpGet("email")]
+        public async Task<IActionResult> GetByEmail([FromQuery] string value)
+        {
+            if (string.IsNullOrEmpty(value)) return BadRequest("Email is required.");
+
+            var user = await _userService.GetByEmailAsync(value);
+
+            if (user == null) return NotFound("User not found.");
+
+            return Ok(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromBody] User user)
+        {
+            await _userService.AddUserAsync(user);
+            return CreatedAtAction(nameof(CreateUser), new { id = user.Id }, user);
+        }
+        
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] User user)
+        {
+            if (id != user.Id)
+                return BadRequest();
+
+            await _userService.UpdateUserAsync(user);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            await _userService.DeleteUserAsync(id);
+            return NoContent();
+        }
+    }
+}
