@@ -1,0 +1,125 @@
+@page "/users"
+@using GeoDataPortal.UI.Models
+@using GeoDataPortal.UI.Services
+@inject UserService UserService
+
+<h3>User Management</h3>
+
+@if (users == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1" @onclick="() => EditUser(user)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h5>@(isEdit ? "Update User" : "Create New User")</h5>
+
+<EditForm Model="formUser" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name</label>
+        <InputText class="form-control" @bind-Value="formUser.Username" />
+    </div>
+
+    <div class="mb-3">
+        <label>Email</label>
+        <InputText class="form-control" @bind-Value="formUser.Email" />
+    </div>
+
+    <button type="submit" class="btn btn-success">@((isEdit ? "Update" : "Create"))</button>
+
+    @if (isEdit)
+    {
+        <button type="button" class="btn btn-secondary ms-2" @onclick="CancelEdit">Cancel</button>
+    }
+</EditForm>
+
+@code {
+    private List<User>? users;
+    private User formUser = new();
+    private bool isEdit = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        users = await UserService.GetAllUser();
+    }
+
+    private async Task HandleSubmit()
+    {
+        bool success;
+        if (isEdit)
+        {
+            success = await UserService.UpdateUserAsync(formUser);
+        }
+        else
+        {
+            formUser.Id = Guid.NewGuid(); // generate ID for new user
+            success = await UserService.CreateUserAsync(formUser);
+        }
+
+        if (success)
+        {
+            await LoadUsers();
+            formUser = new();
+            isEdit = false;
+        }
+    }
+
+    private void EditUser(User user)
+    {
+        formUser = new User
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email
+        };
+        isEdit = true;
+    }
+
+    private void CancelEdit()
+    {
+        formUser = new();
+        isEdit = false;
+    }
+
+    private async Task DeleteUser(Guid id)
+    {
+        var success = await UserService.DeleteUserAsync(id);
+        if (success)
+        {
+            await LoadUsers();
+        }
+    }
+}
