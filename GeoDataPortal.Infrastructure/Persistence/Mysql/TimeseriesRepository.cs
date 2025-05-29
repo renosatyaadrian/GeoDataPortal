@@ -40,8 +40,16 @@ namespace GeoDataPortal.Infrastructure.Persistence.Mysql
 
         public async Task UpdateAsync(Timeseries timeseries)
         {
-            _dbContext.Timeseries.Update(timeseries);
-            await _dbContext.SaveChangesAsync();
+            var existingTimeseries = await _dbContext.Timeseries.FindAsync(timeseries.Id);
+            if (existingTimeseries != null)
+            {
+                existingTimeseries.GeoDataId = timeseries.GeoDataId;
+                existingTimeseries.Timestamp = timeseries.Timestamp;
+                existingTimeseries.Type = timeseries.Type;
+                existingTimeseries.Unit = timeseries.Unit;
+                existingTimeseries.Value = timeseries.Value;
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

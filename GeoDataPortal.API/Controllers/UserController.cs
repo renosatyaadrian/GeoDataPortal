@@ -1,5 +1,5 @@
+using GeoDataPortal.Application.DTOs.Users;
 using GeoDataPortal.Application.Interface;
-using GeoDataPortal.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoDataPortal.API.Controllers
@@ -44,14 +44,14 @@ namespace GeoDataPortal.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] AddUpdateUserDto user)
         {
             await _userService.AddUserAsync(user);
             return CreatedAtAction(nameof(CreateUser), new { id = user.Id }, user);
         }
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] User user)
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] AddUpdateUserDto user)
         {
             if (id != user.Id)
                 return BadRequest();

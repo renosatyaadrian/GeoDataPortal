@@ -1,14 +1,14 @@
-using GeoDataPortal.Domain.Entities;
+using GeoDataPortal.Application.DTOs.Users;
 
 namespace GeoDataPortal.Application.Interface
 {
     public interface IUserService
     {
-        Task<User?> GetUserByIdAsync(Guid id);
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User?> GetByEmailAsync(string email);
-        Task AddUserAsync(User user);
-        Task UpdateUserAsync(User user);
+        Task<UserDetailDto?> GetUserByIdAsync(Guid id);
+        Task<IEnumerable<UserDetailDto>> GetAllUsersAsync();
+        Task<UserDetailDto?> GetByEmailAsync(string email);
+        Task AddUserAsync(AddUpdateUserDto user);
+        Task UpdateUserAsync(AddUpdateUserDto user);
         Task DeleteUserAsync(Guid id);
     }
 }

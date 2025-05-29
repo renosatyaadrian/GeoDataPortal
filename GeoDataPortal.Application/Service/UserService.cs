@@ -1,3 +1,4 @@
+using GeoDataPortal.Application.DTOs.Users;
 using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using GeoDataPortal.Domain.Interfaces;
@@ -12,9 +13,15 @@ namespace GeoDataPortal.Application.Service
         {
             _userRepository = userRepository;
         }
-        public Task AddUserAsync(User user)
+        public Task AddUserAsync(AddUpdateUserDto user)
         {
-            return _userRepository.AddAsync(user);
+            var newUser = new User
+            {
+                Username = user.Username,
+                Email = user.Email
+            };
+
+            return _userRepository.AddAsync(newUser);
         }
 
         public Task DeleteUserAsync(Guid id)
@@ -22,24 +29,59 @@ namespace GeoDataPortal.Application.Service
             return _userRepository.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDetailDto>> GetAllUsersAsync()
         {
-            return _userRepository.GetAllAsync();
+            var results = await _userRepository.GetAllAsync();
+
+            return results
+                .Select(r => new UserDetailDto
+                {
+                    Id = r.Id,
+                    Email = r.Email,
+                    Username = r.Username,
+                })
+                .ToList();
         }
 
-        public Task<User?> GetByEmailAsync(string email)
+        public async Task<UserDetailDto?> GetByEmailAsync(string email)
         {
-            return _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user != null)
+            {
+                return new UserDetailDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Username = user.Username
+                };
+            }
+            return null;
         }
 
-        public Task<User?> GetUserByIdAsync(Guid id)
+        public async Task<UserDetailDto?> GetUserByIdAsync(Guid id)
         {
-            return _userRepository.GetByIdAsync(id);
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                return new UserDetailDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Username = user.Username
+                };
+            }
+            return null;
         }
 
-        public Task UpdateUserAsync(User user)
+        public Task UpdateUserAsync(AddUpdateUserDto user)
         {
-            return _userRepository.UpdateAsync(user);
+            var updatedUser = new User
+            {
+                Id = user.Id!.Value,
+                Email = user.Email,
+                Username = user.Username,
+            };
+            return _userRepository.UpdateAsync(updatedUser);
         }
     }
 }

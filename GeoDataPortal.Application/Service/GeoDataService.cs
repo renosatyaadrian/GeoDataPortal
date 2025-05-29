@@ -1,3 +1,4 @@
+using GeoDataPortal.Application.DTOs.GeoData;
 using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using GeoDataPortal.Domain.Interfaces;
@@ -13,9 +14,14 @@ namespace GeoDataPortal.Application.Service
             _geoDataRepository = geoDataRepository;
         }
 
-        public Task AddGeodataAsync(GeoData geoData)
+        public Task AddGeodataAsync(AddUpdateGeoDataDto input)
         {
-            return _geoDataRepository.AddAsync(geoData);
+            var newGeoData = new GeoData
+            {
+                GeoJson = input.GeoJson,
+                Name = input.Name
+            };
+            return _geoDataRepository.AddAsync(newGeoData);
         }
 
         public Task DeleteGeoDataAsync(Guid id)
@@ -23,19 +29,43 @@ namespace GeoDataPortal.Application.Service
             return _geoDataRepository.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<GeoData>> GetAllGeoDataAsync()
+        public async Task<IEnumerable<GeoDataDetailDto>> GetAllGeoDataAsync()
         {
-            return _geoDataRepository.GetAllAsync();
+            var geoDatas = await _geoDataRepository.GetAllAsync();
+            return geoDatas
+                .Select(g => new GeoDataDetailDto
+                {
+                    Id = g.Id,
+                    GeoJson = g.GeoJson,
+                    Name = g.Name
+                })
+                .ToList();
         }
 
-        public Task<GeoData?> GetGeoDataByIdAsync(Guid id)
+        public async Task<GeoDataDetailDto?> GetGeoDataByIdAsync(Guid id)
         {
-            return _geoDataRepository.GetByIdAsync(id);
+            var geoData = await _geoDataRepository.GetByIdAsync(id);
+            if (geoData != null)
+            {
+                return new GeoDataDetailDto
+                {
+                    Id = geoData.Id,
+                    GeoJson = geoData.GeoJson,
+                    Name = geoData.Name
+                };
+            }
+            return null;
         }
 
-        public Task UpdateGeoDataAsync(GeoData geoData)
+        public Task UpdateGeoDataAsync(AddUpdateGeoDataDto geoData)
         {
-            return _geoDataRepository.UpdateAsync(geoData);
+            var updatedGeoData = new GeoData
+            {
+                Id = geoData.Id!.Value,
+                GeoJson = geoData.GeoJson,
+                Name = geoData.Name
+            };
+            return _geoDataRepository.UpdateAsync(updatedGeoData);
         }
     }
 }

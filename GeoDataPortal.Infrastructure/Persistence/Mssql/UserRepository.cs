@@ -49,8 +49,13 @@ namespace GeoDataPortal.Infrastructure.Persistence.Mssql
 
         public async Task UpdateAsync(User user)
         {
-            _dbContext.Users.Update(user);
-            await _dbContext.SaveChangesAsync();
+            var existingUser = await _dbContext.Users.FindAsync(user.Id);
+            if (existingUser != null)
+            {
+                existingUser.Email = user.Email;
+                existingUser.Username = user.Username;
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

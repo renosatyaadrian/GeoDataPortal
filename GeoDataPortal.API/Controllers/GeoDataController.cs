@@ -1,5 +1,5 @@
+using GeoDataPortal.Application.DTOs.GeoData;
 using GeoDataPortal.Application.Interface;
-using GeoDataPortal.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoDataPortal.API.Controllers
@@ -32,14 +32,14 @@ namespace GeoDataPortal.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGeoData([FromBody] GeoData geoData)
+        public async Task<IActionResult> CreateGeoData([FromBody] AddUpdateGeoDataDto geoData)
         {
             await _geoDataService.AddGeodataAsync(geoData);
             return CreatedAtAction(nameof(CreateGeoData), new { id = geoData.Id }, geoData);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGeoData(Guid id, [FromBody] GeoData geoData)
+        public async Task<IActionResult> UpdateGeoData(Guid id, [FromBody] AddUpdateGeoDataDto geoData)
         {
             if (id != geoData.Id)
                 return BadRequest();

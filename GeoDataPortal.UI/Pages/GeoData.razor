@@ -56,8 +56,8 @@ else
 
     <EditForm Model="@formTimeseries" OnValidSubmit="HandleTimeseriesSubmit">
         <InputDate @bind-Value="formTimeseries.Timestamp" class="form-control" />
-        <InputText @bind-Value="formTimeseries.Type" class="form-control" />
-        <InputText @bind-Value="formTimeseries.Unit" class="form-control" />
+        <InputText @bind-Value="formTimeseries.Type" class="form-control" placeholder="Type" />
+        <InputText @bind-Value="formTimeseries.Unit" class="form-control" placeholder="Unit" />
         <InputNumber @bind-Value="formTimeseries.Value" class="form-control" />
         <button type="submit" class="btn btn-secondary mt-2">
             @((isEditTimeseries) ? "Update" : "Add") Timeseries

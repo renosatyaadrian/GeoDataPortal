@@ -1,5 +1,5 @@
+using GeoDataPortal.Application.DTOs.Timeseries;
 using GeoDataPortal.Application.Interface;
-using GeoDataPortal.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoDataPortal.API.Controllers
@@ -23,14 +23,14 @@ namespace GeoDataPortal.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTimeseries([FromBody] Timeseries timeseries)
+        public async Task<IActionResult> CreateTimeseries([FromBody] AddUpdateTimeseriesDto timeseries)
         {
             await _timeseriesService.AddTimeseriesAsync(timeseries);
             return CreatedAtAction(nameof(CreateTimeseries), new { id = timeseries.Id }, timeseries);
         }
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTimeseries(Guid id, [FromBody] Timeseries timeseries)
+        public async Task<IActionResult> UpdateTimeseries(Guid id, [FromBody] AddUpdateTimeseriesDto timeseries)
         {
             if (id != timeseries.Id)
                 return BadRequest();

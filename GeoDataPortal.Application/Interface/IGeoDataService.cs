@@ -1,13 +1,13 @@
-using GeoDataPortal.Domain.Entities;
+using GeoDataPortal.Application.DTOs.GeoData;
 
 namespace GeoDataPortal.Application.Interface
 {
     public interface IGeoDataService
     {
-        Task<GeoData?> GetGeoDataByIdAsync(Guid id);
-        Task<IEnumerable<GeoData>> GetAllGeoDataAsync();
-        Task AddGeodataAsync(GeoData geoData);
-        Task UpdateGeoDataAsync(GeoData geoData);
+        Task<GeoDataDetailDto?> GetGeoDataByIdAsync(Guid id);
+        Task<IEnumerable<GeoDataDetailDto>> GetAllGeoDataAsync();
+        Task AddGeodataAsync(AddUpdateGeoDataDto geoData);
+        Task UpdateGeoDataAsync(AddUpdateGeoDataDto geoData);
         Task DeleteGeoDataAsync(Guid id);
     }
 }

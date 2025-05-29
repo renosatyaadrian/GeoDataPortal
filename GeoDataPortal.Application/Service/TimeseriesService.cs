@@ -1,3 +1,4 @@
+using GeoDataPortal.Application.DTOs.Timeseries;
 using GeoDataPortal.Application.Interface;
 using GeoDataPortal.Domain.Entities;
 using GeoDataPortal.Domain.Interfaces;
@@ -13,9 +14,17 @@ namespace GeoDataPortal.Application.Service
             _timeseriesRepository = timeseriesRepository;
         }
 
-        public Task AddTimeseriesAsync(Timeseries timeseries)
+        public Task AddTimeseriesAsync(AddUpdateTimeseriesDto input)
         {
-            return _timeseriesRepository.AddAsync(timeseries);
+            var newTimeseries = new Timeseries
+            {
+                GeoDataId = input.GeoDataId,
+                Timestamp = input.Timestamp,
+                Type = input.Type,
+                Unit = input.Unit,
+                Value = input.Value
+            };
+            return _timeseriesRepository.AddAsync(newTimeseries);
         }
 
         public Task DeleteTimeseriesAsync(Guid id)
@@ -23,14 +32,34 @@ namespace GeoDataPortal.Application.Service
             return _timeseriesRepository.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<Timeseries>> GetTimeseriesByGeoDataIdAsync(Guid geoDataId)
+        public async Task<IEnumerable<TimeseriesDetailDto>> GetTimeseriesByGeoDataIdAsync(Guid geoDataId)
         {
-            return _timeseriesRepository.GetByGeoDataIdAsync(geoDataId);
+            var timeseries = await _timeseriesRepository.GetByGeoDataIdAsync(geoDataId);
+            return timeseries
+                .Select(t => new TimeseriesDetailDto
+                {
+                    GeoDataId = t.GeoDataId,
+                    Timestamp = t.Timestamp,
+                    Value = t.Value,
+                    Type = t.Type,
+                    Unit = t.Unit,
+                    Id = t.Id
+                })
+                .ToList();
         }
 
-        public Task UpdateTimeseriesAsync(Timeseries timeseries)
+        public Task UpdateTimeseriesAsync(AddUpdateTimeseriesDto input)
         {
-            return _timeseriesRepository.UpdateAsync(timeseries);
+            var updatedTimeseries = new Timeseries
+            {
+                GeoDataId = input.GeoDataId,
+                Id = input.Id!.Value,
+                Timestamp = input.Timestamp,
+                Type = input.Type,
+                Unit = input.Unit,
+                Value = input.Value
+            };
+            return _timeseriesRepository.UpdateAsync(updatedTimeseries);
         }
     }
 }

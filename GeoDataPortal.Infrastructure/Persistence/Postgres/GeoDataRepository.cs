@@ -44,8 +44,13 @@ namespace GeoDataPortal.Infrastructure.Persistence.Postgres
 
         public async Task UpdateAsync(GeoData geoData)
         {
-            _dbContext.GeoDatas.Update(geoData);
-            await _dbContext.SaveChangesAsync();
+            var existingGeoData = await _dbContext.GeoDatas.FindAsync(geoData.Id);
+            if (existingGeoData != null)
+            {
+                existingGeoData.GeoJson = geoData.GeoJson;
+                existingGeoData.Name = geoData.Name;
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }
